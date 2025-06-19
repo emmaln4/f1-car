@@ -17,7 +17,7 @@ void pista() {
   endShape();
   
     // Muri esterni
-  float wallHeight = -200;
+  float wallHeight = -100;
   fill(150);  // grigio chiaro muro
   beginShape(QUAD_STRIP);
   for (float ang = 0; ang <= TWO_PI + 0.1; ang += 0.1) {
@@ -50,77 +50,6 @@ void pista() {
   line(x1, 2, z1, x2, 2, z2);  
   popMatrix();
 }
-void pista2() {
-  pushMatrix();
-  translate(0, 0, 0); // posizione della pista
-  float width = 300; // larghezza pista
-  float lineWidth = 3; // spessore linee bianche
-
-  float[][] points = {
-    {0, 0},
-    {2000, -1000},
-    {3000, -1100},
-    {3500, -2000},
-    {2500, -3000},
-    {1500, -3250},
-    {-1000, -3000},
-    {-2000, -2500},
-    {-1750, -1500},
-    {-1000, -750},
-    {0, 0}
-  };
-
-  // Disegno pista (asfalto)
-  fill(60);
-  noStroke();
-  beginShape(QUAD_STRIP);
-  PVector[] bordiEsterni = new PVector[points.length * 2];
-  for (int i = 0; i < points.length; i++) {
-    float x = points[i][0];
-    float z = points[i][1];
-
-    float nextX = 0;
-    float nextZ = 1;
-    if (i < points.length - 1) {
-      nextX = points[i + 1][0] - x;
-      nextZ = points[i + 1][1] - z;
-    }
-
-    float norm = sqrt(nextX * nextX + nextZ * nextZ);
-    float dx = -nextZ / norm * width;
-    float dz = nextX / norm * width;
-
-    // Salvo i bordi per le linee dopo
-    bordiEsterni[i * 2] = new PVector(x + dx, z + dz);     // lato destro
-    bordiEsterni[i * 2 + 1] = new PVector(x - dx, z - dz); // lato sinistro
-
-    vertex(x + dx, 0, z + dz);
-    vertex(x - dx, 0, z - dz);
-  }
-  endShape();
-
-  //// Disegno track limits (linee bianche)
-  //stroke(255);
-  //strokeWeight(lineWidth);
-  //noFill();
-  //beginShape();
-  //for (int i = 0; i < bordiEsterni.length - 2; i += 2) {
-  //  PVector v1 = bordiEsterni[i];
-  //  PVector v2 = bordiEsterni[i + 2];
-  //  line(v1.x, 1, v1.z, v2.x, 1, v2.z); // lato destro
-  //}
-  //for (int i = 1; i < bordiEsterni.length - 2; i += 2) {
-  //  PVector v1 = bordiEsterni[i];
-  //  PVector v2 = bordiEsterni[i + 2];
-  //  line(v1.x, 1, v1.wdz, v2.x, 1, v2.z); // lato sinistro
-  //}
-  //endShape();
-
-  popMatrix();
-}
-
-
-
 
 void terra() {
   pushMatrix();
@@ -134,5 +63,55 @@ void terra() {
   vertex(dim, 0, dim);
   vertex(-dim, 0, dim);
   endShape();
+  popMatrix();
+}
+
+
+void torreCentroPista(float x, float y, float z) {
+  float w = 400;
+  float h = 2300;
+  float d = 400;
+  
+  pushMatrix();
+  translate(x, y - h/2, z); // posiziona la torre centrata in altezza
+  fill(60);
+  noStroke();
+  box(w, h, d);  // torre fisica
+
+  String testo = "GIRO " + giroCorrente;
+  textAlign(CENTER, CENTER);
+  textSize(100); // più grande per una torre alta
+  fill(255);
+
+  float offsetY = -h/2 + 400;  // posizione verticale del testo (più in alto)
+
+  // Lato frontale
+  pushMatrix();
+  translate(0, offsetY, d/2 + 1);
+  rotateY(0);
+  text(testo, 0, 0);
+  popMatrix();
+
+  // Lato destro
+  pushMatrix();
+  translate(w/2 + 1, offsetY, 0);
+  rotateY(HALF_PI);
+  text(testo, 0, 0);
+  popMatrix();
+
+  // Lato posteriore
+  pushMatrix();
+  translate(0, offsetY, -d/2 - 1);
+  rotateY(PI);
+  text(testo, 0, 0);
+  popMatrix();
+
+  // Lato sinistro
+  pushMatrix();
+  translate(-w/2 - 1, offsetY, 0);
+  rotateY(-HALF_PI);
+  text(testo, 0, 0);
+  popMatrix();
+
   popMatrix();
 }
